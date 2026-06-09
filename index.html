@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Base Converter — Binary, Hex, Decimal, Octal</title>
+<meta name="description" content="Free online number base converter. Convert between binary, hexadecimal, octal, decimal, Base32, Base36 and custom bases with live results, bit visualization, byte breakdown, and arithmetic.">
+<meta property="og:title" content="Number Base Converter — Binary, Hex, Decimal, Octal">
+<meta property="og:description" content="Convert numbers instantly between binary, hex, octal, decimal, and custom bases with bit visualization and byte breakdown.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://number-converter.pages.dev">
+<meta property="og:image" content="https://number-converter.pages.dev/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔢</text></svg>">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Number Base Converter",
+  "description": "Convert numbers between binary, hexadecimal, octal, decimal, Base32, Base36 and custom bases with live results.",
+  "url": "https://number-converter.pages.dev",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--orange:#d29922;--red:#f85149;--purple:#bc8cff}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;padding:0 16px 60px}
+.container{max-width:960px;margin:0 auto}
+header{text-align:center;padding:40px 0 24px}
+header h1{font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:var(--muted);margin-top:6px;font-size:1.05rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+h2{font-size:1.2rem;margin-bottom:14px;color:var(--accent)}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+input[type=text],input[type=number],select{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem;font-family:'Cascadia Code',Fira Code,monospace;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:var(--accent)}
+.input-row{display:flex;gap:12px;align-items:flex-end}
+.input-row>div{flex:1}
+.input-row .base-col{max-width:200px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>.card{flex:1;min-width:280px}
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.output-grid{grid-template-columns:1fr}}
+.out-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.out-item .lbl{font-size:.75rem;color:var(--muted);white-space:nowrap}
+.out-item .val{font-family:'Cascadia Code',Fira Code,monospace;word-break:break-all;flex:1;font-size:.95rem}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;cursor:pointer;font-size:.75rem;transition:all .2s;white-space:nowrap}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{border-color:var(--green);color:var(--green)}
+.bit-grid{display:flex;flex-wrap:wrap;gap:2px;font-family:'Cascadia Code',Fira Code,monospace;font-size:.82rem}
+.bit{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-weight:600}
+.bit.one{background:var(--accent);color:#000}
+.bit.zero{background:var(--border);color:var(--muted)}
+.bit-pos{font-size:.6rem;color:var(--muted);text-align:center;margin-top:1px}
+.byte-group{display:flex;gap:8px;flex-wrap:wrap}
+.byte-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center;font-family:'Cascadia Code',Fira Code,monospace}
+.byte-item .byte-hex{color:var(--orange);font-weight:600}
+.byte-item .byte-bin{font-size:.75rem;color:var(--muted)}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px}
+.quick-btns button{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.quick-btns button:hover{border-color:var(--accent);color:var(--accent)}
+.arith-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.arith-row input{flex:1;min-width:100px}
+.arith-row select{width:60px}
+.arith-row button{padding:10px 16px;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:.95rem}
+.ascii-display{font-size:2rem;text-align:center;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;min-height:60px;font-family:'Cascadia Code',Fira Code,monospace}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:30px 0}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.feat h3{color:var(--accent);margin-bottom:8px;font-size:1rem}
+.feat p{color:var(--muted);font-size:.9rem}
+.faq{margin:30px 0}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}
+.faq-item h3{color:var(--accent);font-size:1rem;margin-bottom:6px}
+.faq-item p{color:var(--muted);font-size:.9rem}
+.cross-links{margin:30px 0;text-align:center}
+.cross-links a{color:var(--accent);text-decoration:none;margin:0 12px}
+.cross-links a:hover{text-decoration:underline}
+.email-widget{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;margin:30px 0}
+.email-widget p{color:var(--muted);margin-bottom:12px}
+.email-form{display:flex;gap:8px;max-width:400px;margin:0 auto}
+.email-form input{flex:1}
+.email-form button{padding:10px 20px;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+footer{text-align:center;padding:30px 0;color:var(--muted);font-size:.85rem}
+.err{color:var(--red);font-size:.85rem;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>Number Base Converter</h1>
+<p>Binary · Hexadecimal · Octal · Decimal · Base32 · Base36 · Custom — all at once</p>
+</header>
+
+<!-- Input -->
+<div class="card">
+<h2>Input</h2>
+<div class="input-row">
+<div>
+<label for="numInput">Number</label>
+<input type="text" id="numInput" placeholder="Enter a number…" autocomplete="off">
+</div>
+<div class="base-col">
+<label for="baseSelect">Base</label>
+<select id="baseSelect">
+<option value="10" selected>Decimal</option>
+<option value="2">Binary</option>
+<option value="8">Octal</option>
+<option value="16">Hexadecimal</option>
+<option value="32">Base32</option>
+<option value="36">Base36</option>
+<option value="custom">Custom (2–36)</option>
+</select>
+</div>
+<div class="base-col" id="customBaseWrap" style="display:none">
+<label for="customBase">Custom Base</label>
+<input type="number" id="customBase" min="2" max="36" value="2">
+</div>
+</div>
+<div id="inputErr" class="err"></div>
+<div style="margin-top:14px">
+<label>Quick Values</label>
+<div class="quick-btns">
+<button onclick="setVal('255',10)">255</button>
+<button onclick="setVal('65535',10)">65535</button>
+<button onclick="setVal('4294967295',10)">4294967295</button>
+<button onclick="setVal('0xFF',16)">0xFF</button>
+<button onclick="setVal('0xFFFF',16)">0xFFFF</button>
+<button onclick="setVal('0b11111111',2)">0b11111111</button>
+<button onclick="setVal('0o777',8)">0o777</button>
+<button onclick="setVal('1024',10)">2¹⁰</button>
+<button onclick="setVal('1073741824',10)">2³⁰</button>
+<button onclick="setVal('128',10)">128</button>
+</div>
+</div>
+</div>
+
+<!-- Output -->
+<div class="row">
+<div class="card">
+<h2>Live Conversions</h2>
+<div class="output-grid" id="outputs"></div>
+</div>
+</div>
+
+<!-- Bit Visualizer & Byte Breakdown -->
+<div class="row">
+<div class="card">
+<h2>Bit Visualizer</h2>
+<div id="bitViz" style="overflow-x:auto"></div>
+</div>
+<div class="card">
+<h2>Byte Breakdown</h2>
+<div id="byteBreakdown"><span style="color:var(--muted)">Enter a number to see byte breakdown</span></div>
+</div>
+</div>
+
+<!-- ASCII -->
+<div class="card">
+<h2>ASCII Character</h2>
+<div class="ascii-display" id="asciiDisplay">—</div>
+</div>
+
+<!-- Arithmetic -->
+<div class="card">
+<h2>Arithmetic</h2>
+<div class="arith-row">
+<input type="text" id="arithA" placeholder="Number A">
+<select id="arithOp"><option value="+">+</option><option value="-">−</option><option value="*">×</option><option value="/">÷</option><option value="&">AND</option><option value="|">OR</option><option value="^">XOR</option><option value="<<">«</option><option value=">>">»</option></select>
+<input type="text" id="arithB" placeholder="Number B">
+<button onclick="doArith()">=</button>
+</div>
+<div id="arithResult" style="margin-top:10px;font-family:'Cascadia Code',Fira Code,monospace"></div>
+</div>
+
+<!-- Features -->
+<div class="features">
+<div class="feat"><h3>⚡ Live Conversion</h3><p>See results in every supported base as you type — no submit button needed.</p></div>
+<div class="feat"><h3>🔬 Bit Visualizer</h3><p>Interactive binary display with labeled bit positions so you understand the structure.</p></div>
+<div class="feat"><h3>🧮 Built-in Arithmetic</h3><p>Add, subtract, multiply, or perform bitwise operations and convert the result instantly.</p></div>
+<div class="feat"><h3>📋 One-click Copy</h3><p>Copy any result to clipboard with a single click — formatted exactly as shown.</p></div>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+<h2 style="text-align:center;margin-bottom:20px">Frequently Asked Questions</h2>
+<div class="faq-item"><h3>How do I convert binary to hex?</h3><p>Enter your binary number, select "Binary" as the input base, and the hexadecimal result appears instantly. For example, 11111111 → FF.</p></div>
+<div class="faq-item"><h3>What is Base32 / Base36?</h3><p>Base32 uses digits 0-9 and letters A-V. Base36 uses 0-9 and A-Z — the most compact single-character-digit representation using alphanumeric characters.</p></div>
+<div class="faq-item"><h3>Can I convert negative numbers?</h3><p>Yes — enter a negative number in any base and all conversions update live. Bit visualization shows the magnitude bits with a sign indicator.</p></div>
+</div>
+
+<!-- Cross Links -->
+<div class="cross-links">
+<h2>Related Tools</h2>
+<p style="color:var(--muted);margin:12px 0">Explore more converters:</p>
+<a href="https://number-converter.pages.dev">Number Base Converter</a>
+<a href="https://rgb-to-hex.pages.dev">RGB to Hex</a>
+<a href="https://timestamp-converter.pages.dev">Timestamp Converter</a>
+</div>
+
+<!-- Email Widget -->
+<div class="email-widget">
+<h2>Stay Updated</h2>
+<p>Get notified when we add new converters and features.</p>
+<div class="email-form">
+<input type="text" id="emailInput" placeholder="you@example.com">
+<button onclick="subscribe()">Subscribe</button>
+</div>
+<div id="emailMsg" style="margin-top:8px;font-size:.9rem"></div>
+</div>
+
+<footer>
+<p>© 2026 Number Base Converter · Built with ❤️</p>
+</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const baseSelect=$('baseSelect'),customWrap=$('customBaseWrap'),customBase=$('customBase'),numInput=$('numInput');
+const bases=[2,8,10,16,32,36];
+const baseNames={2:'Binary',8:'Octal',10:'Decimal',16:'Hex',32:'Base32',36:'Base36'};
+
+baseSelect.onchange=()=>{
+  customWrap.style.display=baseSelect.value==='custom'?'block':'none';
+  convert();
+};
+customBase.onchange=customBase.oninput=convert;
+numInput.oninput=convert;
+
+function getInputBase(){
+  if(baseSelect.value==='custom') return Math.min(36,Math.max(2,parseInt(customBase.value)||2));
+  return parseInt(baseSelect.value);
+}
+
+function setVal(v,b){
+  baseSelect.value=b==='custom'?'custom':b;
+  customWrap.style.display=b==='custom'?'block':'none';
+  numInput.value=v;
+  convert();
+}
+
+function tryParse(val,base){
+  val=val.trim();
+  if(!val)return null;
+  let neg=false;
+  if(val[0]==='-'){neg=true;val=val.substring(1)}
+  if(!val)return null;
+  // strip common prefixes
+  if(base===16&&val.startsWith('0x')||val.startsWith('0X'))val=val.slice(2);
+  if(base===8&&val.startsWith('0o')||val.startsWith('0O'))val=val.slice(2);
+  if(base===2&&val.startsWith('0b')||val.startsWith('0B'))val=val.slice(2);
+  if(!val)return null;
+  const n=parseInt(val,base);
+  if(isNaN(n))return null;
+  return neg?-n:n;
+}
+
+function fmt(n,b){
+  if(n<0)return '-'+fmt(-n,b);
+  return n.toString(b).toUpperCase();
+}
+
+function convert(){
+  const base=getInputBase();
+  const val=numInput.value;
+  const n=tryParse(val,base);
+  const errEl=$('inputErr');
+  if(!val){errEl.textContent='';renderOutputs(null);return}
+  if(n===null){errEl.textContent='Invalid number for base '+base;renderOutputs(null);return}
+  errEl.textContent='';
+  renderOutputs(n);
+  renderBits(n);
+  renderBytes(n);
+  renderAscii(n);
+}
+
+function renderOutputs(n){
+  const el=$('outputs');
+  if(n===null){el.innerHTML='<span style="color:var(--muted)">Enter a number above to see conversions</span>';return}
+  // gather bases
+  const allBases=[...bases];
+  const cb=getInputBase();
+  if(!allBases.includes(cb))allBases.push(cb);
+  el.innerHTML='';
+  for(const b of allBases){
+    const div=document.createElement('div');div.className='out-item';
+    const label=document.createElement('span');label.className='lbl';label.textContent=baseNames[b]||('Base '+b);
+    const v=document.createElement('span');v.className='val';v.textContent=fmt(n,b);
+    const btn=document.createElement('button');btn.className='copy-btn';btn.textContent='Copy';
+    btn.onclick=()=>{navigator.clipboard.writeText(fmt(n,b));btn.textContent='Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},1200)};
+    div.appendChild(label);div.appendChild(v);div.appendChild(btn);
+    el.appendChild(div);
+  }
+}
+
+function renderBits(n){
+  const el=$('bitViz');
+  if(n===null||n<0){el.innerHTML='<span style="color:var(--muted)">Enter a non-negative number to visualize bits</span>';return}
+  const bin=n.toString(2);
+  // pad to multiple of 4
+  const pad=bin.padStart(Math.ceil(bin.length/4)*4,'0');
+  let html='<div class="bit-grid">';
+  for(let i=0;i<pad.length;i++){
+    html+=`<div style="text-align:center"><div class="bit ${pad[i]==='1'?'one':'zero'}">${pad[i]}</div><div class="bit-pos">${pad.length-1-i}</div></div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderBytes(n){
+  const el=$('byteBreakdown');
+  if(n===null||n<0){el.innerHTML='<span style="color:var(--muted)">Enter a non-negative number for byte breakdown</span>';return}
+  if(n===0){el.innerHTML='<div class="byte-group"><div class="byte-item"><div class="byte-hex">00</div><div class="byte-bin">00000000</div></div></div>';return}
+  const hex=n.toString(16).padStart(Math.ceil(n.toString(16).length/2)*2,'0').toUpperCase();
+  const bytes=[];
+  for(let i=0;i<hex.length;i+=2)bytes.push(hex.substring(i,i+2));
+  let html='<div class="byte-group">';
+  bytes.forEach(h=>{
+    const b=parseInt(h,16).toString(2).padStart(8,'0');
+    html+=`<div class="byte-item"><div class="byte-hex">0x${h}</div><div class="byte-bin">${b}</div></div>`;
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderAscii(n){
+  const el=$('asciiDisplay');
+  if(n===null){el.textContent='—';return}
+  if(n>=0&&n<=127){
+    const c=n>=33&&n<=126?String.fromCharCode(n):n===32?'SP':n===10?'LF':n===13?'CR':n===9?'TAB':'NUL';
+    el.innerHTML=`<span style="font-size:2.5rem">${c}</span><br><span style="font-size:.85rem;color:var(--muted)">ASCII ${n}</span>`;
+  }else if(n>=128&&n<=255){
+    el.innerHTML=`<span style="font-size:1rem;color:var(--muted)">Extended ASCII ${n} (0x${n.toString(16).toUpperCase()})</span>`;
+  }else{
+    el.innerHTML='<span style="color:var(--muted)">No ASCII representation</span>';
+  }
+}
+
+function doArith(){
+  const a=parseInt($('arithA').value,10);
+  const b=parseInt($('arithB').value,10);
+  const op=$('arithOp').value;
+  const el=$('arithResult');
+  if(isNaN(a)||isNaN(b)){el.innerHTML='<span class="err">Enter valid decimal numbers for A and B</span>';return}
+  let r;
+  switch(op){
+    case'+':r=a+b;break;case'-':r=a-b;break;case'*':r=a*b;break;
+    case'/':r=b!==0?Math.trunc(a/b):NaN;break;
+    case'&':r=a&b;break;case'|':r=a|b;break;case'^':r=a^b;break;
+    case'<<':r=a<<b;break;case'>>':r=a>>b;break;
+  }
+  if(isNaN(r)){el.innerHTML='<span class="err">Division by zero</span>';return}
+  el.innerHTML=`<span style="color:var(--green);font-size:1.1rem">${r}</span> &nbsp; <span style="color:var(--muted)">Hex: 0x${(r>>>0).toString(16).toUpperCase()} · Bin: ${(r>>>0).toString(2)} · Oct: 0o${(r>>>0).toString(8)}</span>`;
+}
+
+function subscribe(){
+  const email=$('emailInput').value.trim();
+  const msg=$('emailMsg');
+  if(!email||!email.includes('@')){msg.style.color='var(--red)';msg.textContent='Please enter a valid email address.';return}
+  msg.style.color='var(--green)';msg.textContent='Thanks for subscribing! We\'ll keep you posted.';
+  $('emailInput').value='';
+}
+
+convert();
+</script>
+</body>
+</html>
